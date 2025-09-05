@@ -61,7 +61,10 @@ export default {
 					accent: 'hsl(var(--sidebar-accent))',
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
+					ring: 'hsl(var(--sidebar-ring))',
+					gradient: 'var(--sidebar-gradient)',
+					'nav-gradient': 'var(--sidebar-nav-gradient)',
+					'hover-gradient': 'var(--sidebar-hover-gradient)'
 				},
 				/* Financial Dashboard Colors */
 				success: {

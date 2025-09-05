@@ -69,34 +69,66 @@ export function AppSidebar() {
 
   const getNavClass = (path: string) => {
     const active = isActive(path);
-    return `${active ? "bg-sidebar-accent text-sidebar-primary font-medium" : "hover:bg-sidebar-accent/50 text-sidebar-foreground"} transition-colors`;
+    if (active) {
+      return "bg-gradient-to-r from-sidebar-primary/20 to-sidebar-primary/10 text-sidebar-primary border-r-2 border-sidebar-primary shadow-lg shadow-sidebar-primary/20 font-semibold";
+    }
+    return "text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-gradient-to-r hover:from-sidebar-accent/60 hover:to-sidebar-accent/30 hover:shadow-md";
+  };
+
+  const getSubNavClass = (path: string) => {
+    const active = isActive(path);
+    if (active) {
+      return "bg-gradient-to-r from-sidebar-primary/15 to-transparent text-sidebar-primary border-l-2 border-sidebar-primary font-medium";
+    }
+    return "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-gradient-to-r hover:from-sidebar-accent/40 hover:to-transparent hover:border-l-2 hover:border-sidebar-primary/50";
   };
 
   return (
-    <Sidebar className="border-r border-sidebar-border bg-sidebar">
-      <SidebarHeader className="border-b border-sidebar-border p-4">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded bg-sidebar-primary">
-            <Building2 className="h-5 w-5 text-sidebar-primary-foreground" />
+    <Sidebar className="border-r border-sidebar-border overflow-hidden" style={{ background: 'var(--sidebar-gradient)' }}>
+      {/* Beautiful Header with Gradient */}
+      <SidebarHeader className="border-b border-sidebar-border/50 p-6 bg-gradient-to-br from-sidebar-primary/10 to-transparent backdrop-blur-sm">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-sidebar-primary to-sidebar-primary/80 shadow-lg shadow-sidebar-primary/30">
+            <Building2 className="h-6 w-6 text-sidebar-primary-foreground" />
           </div>
           {!isCollapsed && (
             <div className="flex flex-col">
-              <span className="text-lg font-bold text-sidebar-foreground">FINTRIO</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-sidebar-foreground to-sidebar-foreground/80 bg-clip-text text-transparent">
+                FINTRIO
+              </span>
+              <span className="text-xs text-sidebar-foreground/60 font-medium">
+                Investment Platform
+              </span>
             </div>
           )}
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="px-3 py-4">
+        {/* Main Navigation */}
         <SidebarGroup>
+          <SidebarGroupLabel className="text-sidebar-foreground/50 text-xs font-semibold uppercase tracking-wider mb-2 px-3">
+            {!isCollapsed && "Navigation"}
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {mainNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className={getNavClass(item.url)}>
+                  <SidebarMenuButton 
+                    asChild 
+                    className={`${getNavClass(item.url)} transition-all duration-200 rounded-lg mx-1 h-11 px-3 group relative overflow-hidden`}
+                  >
                     <NavLink to={item.url} end={item.url === "/"}>
-                      <item.icon className="h-4 w-4" />
-                      {!isCollapsed && <span>{item.title}</span>}
+                      <div className="flex items-center gap-3 relative z-10">
+                        <item.icon className="h-5 w-5 transition-transform group-hover:scale-110" />
+                        {!isCollapsed && (
+                          <span className="font-medium tracking-wide">{item.title}</span>
+                        )}
+                      </div>
+                      {/* Subtle glow effect for active items */}
+                      {isActive(item.url) && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-sidebar-primary/5 to-transparent rounded-lg" />
+                      )}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -105,31 +137,41 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
+        {/* Configuration Section */}
+        <SidebarGroup className="mt-6">
           <SidebarGroupContent>
             <SidebarMenu>
               <Collapsible defaultOpen={isConfigOpen} className="group/collapsible">
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="hover:bg-sidebar-accent/50 text-sidebar-foreground">
-                      <Settings className="h-4 w-4" />
-                      {!isCollapsed && (
-                        <>
-                          <span>Configuration</span>
-                          <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
-                        </>
-                      )}
+                    <SidebarMenuButton className="text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-gradient-to-r hover:from-sidebar-accent/60 hover:to-sidebar-accent/30 transition-all duration-200 rounded-lg mx-1 h-11 px-3 group">
+                      <div className="flex items-center gap-3">
+                        <div className="p-1 rounded-md bg-sidebar-primary/20">
+                          <Settings className="h-4 w-4 text-sidebar-primary" />
+                        </div>
+                        {!isCollapsed && (
+                          <>
+                            <span className="font-medium">Configuration</span>
+                            <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                          </>
+                        )}
+                      </div>
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   {!isCollapsed && (
                     <CollapsibleContent>
-                      <SidebarMenuSub>
+                      <SidebarMenuSub className="mt-2 ml-4 space-y-1">
                         {configItems.map((item) => (
                           <SidebarMenuSubItem key={item.title}>
-                            <SidebarMenuSubButton asChild className={getNavClass(item.url)}>
+                            <SidebarMenuSubButton 
+                              asChild 
+                              className={`${getSubNavClass(item.url)} transition-all duration-200 rounded-md h-9 px-3 group relative`}
+                            >
                               <NavLink to={item.url}>
-                                <item.icon className="h-4 w-4" />
-                                <span>{item.title}</span>
+                                <div className="flex items-center gap-3">
+                                  <item.icon className="h-4 w-4 transition-transform group-hover:scale-110" />
+                                  <span className="text-sm tracking-wide">{item.title}</span>
+                                </div>
                               </NavLink>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
@@ -142,6 +184,18 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Bottom Section - Only show when not collapsed */}
+        {!isCollapsed && (
+          <div className="mt-auto pt-4 border-t border-sidebar-border/30">
+            <div className="px-3 py-2 rounded-lg bg-gradient-to-r from-sidebar-primary/10 to-sidebar-primary/5 border border-sidebar-primary/20">
+              <div className="flex items-center gap-2 text-xs text-sidebar-foreground/60">
+                <div className="w-2 h-2 rounded-full bg-sidebar-primary animate-pulse"></div>
+                <span>System Online</span>
+              </div>
+            </div>
+          </div>
+        )}
       </SidebarContent>
     </Sidebar>
   );
